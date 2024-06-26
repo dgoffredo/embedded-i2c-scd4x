@@ -1,4 +1,6 @@
 #include <hardware/i2c.h>
+#include <stdio.h>
+
 /*
  * Copyright (c) 2018, Sensirion AG
  * All rights reserved.
@@ -34,6 +36,8 @@
 #include "sensirion_config.h"
 #include "sensirion_i2c_hal.h"
 
+#define CHECKPOINT() printf("[%s:%d]\n", __FILE__, __LINE__)
+
 /*
  * INSTRUCTIONS
  * ============
@@ -56,6 +60,7 @@ int16_t sensirion_i2c_hal_select_bus(uint8_t bus_idx) {
     /* TODO:IMPLEMENT or leave empty if all sensors are located on one single
      * bus
      */
+    CHECKPOINT();
     return NOT_IMPLEMENTED_ERROR;
 }
 
@@ -65,6 +70,7 @@ int16_t sensirion_i2c_hal_select_bus(uint8_t bus_idx) {
  */
 void sensirion_i2c_hal_init(void) {
     /* TODO:IMPLEMENT */
+    CHECKPOINT();
 }
 
 /**
@@ -72,6 +78,7 @@ void sensirion_i2c_hal_init(void) {
  */
 void sensirion_i2c_hal_free(void) {
     /* TODO:IMPLEMENT or leave empty if no resources need to be freed */
+    CHECKPOINT();
 }
 
 /**
@@ -85,11 +92,16 @@ void sensirion_i2c_hal_free(void) {
  * @returns 0 on success, error code otherwise
  */
 int8_t sensirion_i2c_hal_read(uint8_t address, uint8_t* data, uint16_t count) {
+    CHECKPOINT();
     int status = i2c_read_blocking(i2c_default, address, data, count, false);
-    if (status == 0)
+
+    if (status == 0) {
+        CHECKPOINT();
         return 1;
-    else
+    } else {
+        CHECKPOINT();
         return 0;
+    }
 }
 
 /**
@@ -106,12 +118,21 @@ int8_t sensirion_i2c_hal_read(uint8_t address, uint8_t* data, uint16_t count) {
 int8_t sensirion_i2c_hal_write(uint8_t address, const uint8_t* data,
                                uint16_t count) {
     // I2C Default is used (I2C0).
+    CHECKPOINT();
+    printf("going to write %u bytes to address 0x%x:", count, (int)address);
+    for (const uint8_t* byte = data; byte < data + count; ++byte) {
+        printf(" 0x%x", (int)*byte);
+    }
+    printf("\n");
     int status = i2c_write_blocking(i2c_default, address, data, count, true);
 
-    if (status == 0)
+    if (status == 0) {
+        CHECKPOINT();
         return 1;
-    else
+    } else {
+        CHECKPOINT();
         return 0;
+    }
 }
 
 /**
@@ -123,5 +144,7 @@ int8_t sensirion_i2c_hal_write(uint8_t address, const uint8_t* data,
  * @param useconds the sleep time in microseconds
  */
 void sensirion_i2c_hal_sleep_usec(uint32_t useconds) {
+    CHECKPOINT();
     sleep_ms(useconds / 1000);
+    CHECKPOINT();
 }
